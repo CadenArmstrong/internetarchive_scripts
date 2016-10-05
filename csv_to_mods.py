@@ -101,10 +101,11 @@ def csv_row_to_mods(csv_row,csv_defs,dest,date):
     note.text = meta['note']
 
     language = SubElement(mods,'language')
-    languageterm = SubElement(mods,'languageTerm')
-    languageterm.attrib['authority'] = "iso639-2b"
-    languageterm.attrib['type'] = "code"
-    language.text = meta['language']
+    for langtext in meta['language'].split(" | "):
+        languageterm = SubElement(mods,'languageTerm')
+        languageterm.attrib['authority'] = "iso639-2b"
+        languageterm.attrib['type'] = "code"
+        language.text = langtext
 
     subject = SubElement(mods,'subject')
     for topictext in meta['topic'].split(" | ")
