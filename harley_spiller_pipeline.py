@@ -43,14 +43,14 @@ pid_database = config['pid_db']
 old_pids = {}
 with open(pid_database) as f:
     for line in f:
-        old_pids[line.split("=")[0]]=line.split("=")[1]
+        old_pids[line.split("=")[0]]=line.split("=")[1].lstrip("\n")
 
 old_pids.update(new_pids)
 
 with open(pid_database, "w") as f:
     writestr = ""
     for key,val in old_pids.items():
-        writestr += "%s=%s\n"%(key,val)
+        writestr += "%s=%s"%(key,val.lstrip("\n"))
     f.write(writestr)
 
 # **************************
@@ -123,6 +123,7 @@ with open(pid_database) as f:
 # Generate structure.xml
 # **************************
 print("ISLANDORA REQUIRED PART")
+print("Creating structure files")
 
 for col in new_collections:
     subprocess.call(['php','create_structure_files.php',processed_path+"/"+col]) #TODO double check this is at the right level
@@ -135,23 +136,27 @@ islandora_preprocess_path = processed_path
 islandora_namespace = config['islandora_namespace']
 
 # Run islandora batch preprocessing
+print("Running preprocessing")
 for col in new_collections:
     islandora_parent_pid = old_pids[col.split("_")[1]]    
-    subprocess.call(['drush','--v','--user='+islandora_user,'--root=/var/www/drupal','islandora_compound_batch_preprocess','--target='+islandora_preprocess_path+col+"/",'--namespace='+islandora_namespace,'--parent='+islandora_parent_pid])
+    subprocess.call(['drush','-v','--user='+islandora_user,'--root=/var/www/drupal','islandora_compound_batch_preprocess','--target='+islandora_preprocess_path+col+"/",'--namespace='+islandora_namespace,'--parent='+islandora_parent_pid])
 
 # Ingest and grab PIDS
-ingest_output = subprocess.check_output(['drush','--v','--user='+islandora_user,'--root=/var/www/drupal','islandora_batch_ingest'])
-ingest_output = ingest_output.split("\n")
-new_objects = []
-for line in ingest_output:
-    if("Ingested" in line):
-        new_objects.append(line.split(" ")[1]) # TODO Check this actually does the thing we want it to
+print("Running Ingest")
+ingest_output = subprocess.call(['drush','--v','--user='+islandora_user,'--root=/var/www/drupal','islandora_batch_ingest'])
 
-# Get islandora labels for associated PID
-labels = []
-for pid in new_objects:
-    new_label = subprocess.check_output(['./islandora_get_label.drush',pid,'--root=/var/www/drupal'])
-    labels.append(new_label.lstrip(".\n"))
+# THIS PART GETS LABELS FROM PIDS?
+#ingest_output = ingest_output.split("\n")
+#new_objects = []
+#for line in ingest_output:
+#    if("Ingested" in line):
+#        new_objects.append(line.split(" ")[1]) # TODO Check this actually does the thing we want it to
+#
+## Get islandora labels for associated PID
+#labels = []
+#for pid in new_objects:
+#    new_label = subprocess.check_output(['./islandora_get_label.drush',pid,'--root=/var/www/drupal'])
+#    labels.append(new_label.lstrip(".\n"))
 
 
 # **************************
@@ -159,18 +164,18 @@ for pid in new_objects:
 # **************************
 
 tickets = ia_redmine.get_all_tickets(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,project_id,redmine_name)
-for col in collections:
+for col in new_collections:
     localid = col.split("_")[1]
     for ticket in tickets:
         if(localid in ticket.subject or localid in ticket.description):
             ia_redmine.update_tickets(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,[ticket],4) # Change to feedback
-            ia_redmine.reassign_tickets(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,[ticket],config['qa_id') # Change to feedback to amanda's id
+            ia_redmine.reassign_tickets(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,[ticket],config['qa_id']) # Change to feedback to amanda's id
     
 
 
 
 # **************************
-# Open redmine ticket
+# Open redmine ticket ( UNUSED)
 # **************************
 
 #issue_subject = config['issue_subject']
@@ -179,7 +184,6 @@ for col in collections:
 #for a in range(0,len(labels)):
 #    issue_description += "new ingested item:" +labels[a]+ "\n"
 #ia_redmine.create_redmine_issue(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,project_id,issue_subject,issue_description,assign_to)
-#TODO UNCOMMENT REDMINe ISSUE MAKING
 # **************************
 # SAVE COLLECTIONS TO DATABASE
 # **************************

@@ -113,20 +113,21 @@ def make_folder_into_compound(folder,destination,scandata,toc,metapath,ext=".jp2
         """
 
     files = glob.glob(folder+"/*"+ext) # Get list of files of the specified type in the folder
+    files.sort()
     padding = len(str(len(files))) # This makes sure that they will be ordered
 
     leafNums = scandata_leafnums(scandata)
+
     date = scan_date(scandata)
     
     identifiers = []
     for entry in toc:
         if len(entry) > 1:
             identifiers.append(entry)
-            
 
     for a in range(0,len(leafNums)):
         identifier = identifiers[a]
-        folders = create_dest_folders(destination+"/"+identifier+"/"+identifier+"_child_",0,len(leafNums[a]),padding) # Create dest folders
+        folders = create_dest_folders(destination+"/"+identifier+"/",0,len(leafNums[a]),padding) # Create dest folders
 
         for b in range(0,len(folders)):
             move_file(files[leafNums[a][b]],folders[b]+"/OBJ.jp2") # Move and rename the files into their respective folder
@@ -181,7 +182,8 @@ def generate_mods(metapath,identifier,dest,date):
             else:
                 if(identifier in row):
                     csv_to_mods.csv_row_to_mods(row,key,dest,date)
-
+                    return 
+    
 def get_toc(path,boxid):
     """path->(String) path to directory containing table of contents
        boxid->(String) box id for group of scans (also filename of TOC file)
@@ -230,7 +232,6 @@ if __name__ == "__main__":
 #print(find_mods("MODS/",""))
 
 #print scandata_leafnums("spiller_006-1-4-3-21_scandata.xml")
-    print(scan_date("spiller_006-1-4-3-21_scandata.xml"))
 
     pass
     

@@ -108,7 +108,7 @@ def csv_row_to_mods(csv_row,csv_defs,dest,date):
         language.text = langtext
 
     subject = SubElement(mods,'subject')
-    for topictext in meta['topic'].split(" | ")
+    for topictext in meta['topic'].split(" | "):
         topic = SubElement(subject,'topic')
         topic.attrib['authority'] = "lcsh"
         topic.text = topictext
