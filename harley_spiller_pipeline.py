@@ -21,7 +21,7 @@ downloaded_path =config['downloaded_path']
 preprocess_path =config['preprocess_path']
 processed_path =config['processed_path']
 tocpath =config['tocpath']
-meta_data_path =config['meta_data_path'] 
+# meta_data_path =config['meta_data_path'] 
 
 # **************************
 # Download new files from redmine
@@ -30,12 +30,12 @@ redmine_url = config['redmine_url']
 project_id = config['project_id'] 
 redmine_name = config['redmine_name']
 
-print("Checking for metadata files")
+print("Checking for dest pids files")
 
 tickets = ia_redmine.get_assigned_tickets(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,project_id,redmine_name)
-ia_redmine.download_all_files(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,tickets,meta_data_path)
+# ia_redmine.download_all_files(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,tickets,meta_data_path)
 ia_redmine.update_tickets(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,tickets,2) # Change to in progress
-ia_split.move_toc(meta_data_path,tocpath)
+# ia_split.move_toc(meta_data_path,tocpath)
 
 new_pids = ia_redmine.get_pids(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,tickets)
 

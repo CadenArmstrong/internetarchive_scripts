@@ -131,7 +131,7 @@ def make_folder_into_compound(folder,destination,scandata,toc,metapath,ext=".jp2
 
         for b in range(0,len(folders)):
             move_file(files[leafNums[a][b]],folders[b]+"/OBJ.jp2") # Move and rename the files into their respective folder
-            modfile = generate_mods(metapath,identifier,folders[b]+"/MODS.xml",date)
+            modfile = generate_mods(folders[b]+"/MODS.xml",a)
         copy_file(folders[0]+"/MODS.xml",destination+"/"+identifier+"/MODS.xml")
 
 def scandata_leafnums(scandata):
@@ -164,7 +164,7 @@ def copy_file(start,finish):
 
     shutil.copy(start,finish) 
 
-def generate_mods(metapath,identifier,dest,date):
+def generate_mods(dest,number):
     """metapath->(String) path to directory contating meta data files
        indentifier->(String) Identifier to be made into a mod file
        dest->(String) Destination path of folder for MODS.xml file to be put into
@@ -172,17 +172,7 @@ def generate_mods(metapath,identifier,dest,date):
 
        generate a MODS.xml file from a csv meta data file for a given identifier"""
 
-    files = glob.glob(metapath+"*.csv") # Get list of files in the directory given
-    for f in files: # lets look at the all the files
-        key = []
-        reader = csv.reader(codecs.open(f,encoding="utf-8"))
-        for row in reader:
-            if len(key) == 0:
-                key = row
-            else:
-                if(identifier in row):
-                    csv_to_mods.csv_row_to_mods(row,key,dest,date)
-                    return 
+    csv_to_mods.csv_row_to_mods(dest,number)
     
 def get_toc(path,boxid):
     """path->(String) path to directory containing table of contents

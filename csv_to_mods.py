@@ -3,7 +3,7 @@ from xml.etree.ElementTree import SubElement, Element
 import csv
 import codecs
 
-def csv_row_to_mods(csv_row,csv_defs,dest,date):
+def csv_row_to_mods(dest,number):
     """csv_row->List(String) a single row read in from a csv reader
        csv_defs->List(String) the first row from a csv file to give the dict keys
        dest->(String) Path to folder where MODS.xml will be saved
@@ -36,8 +36,6 @@ def csv_row_to_mods(csv_row,csv_defs,dest,date):
         
         Create a mods file from a csv row (already processed in lists) """
 
-    meta = dict(zip(csv_defs,csv_row))
-
     xmlns_uris = ['http://www.loc.gov/mods/v3', 'http://www.loc.gov/mods/v3','http://www.w3.org/2001/XMLSchema-instance','http://www.w3.org/1999/xlink']
     
     mods = Element("mods")
@@ -48,7 +46,7 @@ def csv_row_to_mods(csv_row,csv_defs,dest,date):
 
     titleinfo = SubElement(mods,'titleInfo')
     title = SubElement(titleinfo,'title')
-    title.text = meta['title']
+    title.text = number
 
 
     name = SubElement(mods,'name')
@@ -61,7 +59,7 @@ def csv_row_to_mods(csv_row,csv_defs,dest,date):
 
     role = SubElement(name,'role')
     rolepart = SubElement(role,'roleTerm')
-    rolepart.text = meta['role']
+    rolepart.text = ""
     rolepart.attrib['authority'] = "marcrelator"
     rolepart.attrib['type'] = "text"
 
@@ -73,66 +71,64 @@ def csv_row_to_mods(csv_row,csv_defs,dest,date):
 
     origininfo = SubElement(mods,'originInfo')
     datecaptured = SubElement(origininfo,'dateCaptured')
-    datecaptured.text = date
+    datecaptured.text = ""
     datecreated = SubElement(origininfo, 'dateCreated')
-    datecreated.attrib['qualifier'] = meta['dateQualifier']
-    datecreated.text = meta['dateCreated']
+    datecreated.attrib['qualifier'] = ""
+    datecreated.text = ""
 
     datenote = SubElement(mods,'note')
     datenote.attrib['ID'] = "datenote"
-    datenote.text = meta['dateNote']
+    datenote.text = ""
 
     description = SubElement(mods,'abstract')
-    description.text = meta['description']
+    description.text = ""
 
     identifier= SubElement(mods,'identifier')
     identifier.attrib['type'] = "local"
-    identifier.text = meta['identifierLocal']
+    identifier.text = ""
 
 
     physicaldesc = SubElement(mods,'physicalDescription')
     form = SubElement(physicaldesc,'form')
     form.attrib['authority'] = "marcform"
-    form.text = meta['form']
+    form.text = ""
     extent = SubElement(physicaldesc,'extent')
-    extent.text = meta['extent']
+    extent.text = ""
 
     note = SubElement(mods,'note')
-    note.text = meta['note']
+    note.text = ""
 
     language = SubElement(mods,'language')
-    for langtext in meta['language'].split(" | "):
-        languageterm = SubElement(mods,'languageTerm')
-        languageterm.attrib['authority'] = "iso639-2b"
-        languageterm.attrib['type'] = "code"
-        language.text = langtext
+    languageterm = SubElement(mods,'languageTerm')
+    languageterm.attrib['authority'] = "iso639-2b"
+    languageterm.attrib['type'] = "code"
+    language.text = ""
 
     subject = SubElement(mods,'subject')
-    for topictext in meta['topic'].split(" | "):
-        topic = SubElement(subject,'topic')
-        topic.attrib['authority'] = "lcsh"
-        topic.text = topictext
+    topic = SubElement(subject,'topic')
+    topic.attrib['authority'] = "lcsh"
+    topic.text = ""
 
     geographic = SubElement(subject,'geographic') # TODO blank?
     temporal = SubElement(subject,'temporal') # TODO blank?
     hierarchicalgeographic = SubElement(subject,'hierarchicalGeographic')
     continent = SubElement(hierarchicalgeographic,'continent')
-    continent.text = meta['continent']
+    continent.text = ""
     country = SubElement(hierarchicalgeographic,'country')
-    country.text = meta['country']
+    country.text = ""
     province = SubElement(hierarchicalgeographic,'province')
-    province.text = meta['province']
+    province.text = ""
     state = SubElement(hierarchicalgeographic,'state')
-    state.text = meta['state']
+    state.text = ""
     region = SubElement(hierarchicalgeographic,'region') 
     county = SubElement(hierarchicalgeographic,'county') 
-    county.text = meta['county'] 
+    county.text = ""
     city = SubElement(hierarchicalgeographic,'city') 
-    city.text = meta['city'] 
+    city.text = ""
     citysection= SubElement(hierarchicalgeographic,'citySection') 
     cartographics = SubElement(subject,'cartographics')
     coordinates = SubElement(cartographics,'coordinates')
-    coordinates.text = meta['coordinates']
+    coordinates.text = ""
 
 
     location = SubElement(mods,'location')
@@ -141,7 +137,7 @@ def csv_row_to_mods(csv_row,csv_defs,dest,date):
     holdinginstitution.text = "University of Toronto Scarborough Library, Archives & Special Collections"
     source = SubElement(location,'physicalLocation')
     source.attrib['type'] = "source"
-    source.text = meta['source']
+    source.text = ""
     
     accesscondition = SubElement(mods,'accessCondition') # Rights
     accesscondition.text = "Digital files found on the Digital Scholarship Unit site are meant for research and private study used in compliance with copyright legislation. Access to digital images and text found on this website and the technical capacity to download or copy it does not imply permission to re-use. Prior written permission to publish, or otherwise use images and text found on the website must be obtained from the copyright holder. Please contact UTSC Library, Archives & Special Collections for further information."
