@@ -97,7 +97,7 @@ def create_mods_file(xmltree,folder):
     else:
         xmltree.write(folder+"/MODS.xml")
 
-def make_folder_into_compound(folder,destination,scandata,toc,metapath,ext=".jp2"):
+def make_folder_into_compound(folder,destination,scandata,toc,ext=".jp2"):
     """folder->(String) path to folder containing files to make into compounds
        destination->(String) path to folder where compounds will be made
        scandata->(String) path to scandata file containing leaf nums and menu splitting
@@ -131,7 +131,7 @@ def make_folder_into_compound(folder,destination,scandata,toc,metapath,ext=".jp2
 
         for b in range(0,len(folders)):
             move_file(files[leafNums[a][b]],folders[b]+"/OBJ.jp2") # Move and rename the files into their respective folder
-            modfile = generate_mods(folders[b]+"/MODS.xml",a)
+            modfile = generate_mods(folders[b]+"/MODS.xml",identifier+"-"a)
         copy_file(folders[0]+"/MODS.xml",destination+"/"+identifier+"/MODS.xml")
 
 def scandata_leafnums(scandata):

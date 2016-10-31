@@ -107,7 +107,7 @@ for col in new_collections:
     toc = ia_split.get_toc(tocpath,col.split("_")[1])
     tarfile_name = ia_split.get_tarname(downloaded_path+"/"+col).split("/")[-1]
     scandata = ia_split.get_scandata(preprocess_path+"/"+col)
-    ia_split.make_folder_into_compound(preprocess_path+"/"+col+"/"+tarfile_name.rstrip(".tar"),processed_path+"/"+col,scandata,toc,meta_data_path) 
+    ia_split.make_folder_into_compound(preprocess_path+"/"+col+"/"+tarfile_name.rstrip(".tar"),processed_path+"/"+col,scandata,toc) 
 
 
 # **************************
@@ -169,7 +169,7 @@ for col in new_collections:
     for ticket in tickets:
         if(localid in ticket.subject or localid in ticket.description):
             ia_redmine.update_tickets(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,[ticket],4) # Change to feedback
-            ia_redmine.reassign_tickets(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,[ticket],config['qa_id']) # Change to feedback to amanda's id
+#            ia_redmine.reassign_tickets(ia_settings.redmine_username,ia_settings.redmine_password,redmine_url,[ticket],config['qa_id']) # Change to feedback to amanda's id
     
 
 
